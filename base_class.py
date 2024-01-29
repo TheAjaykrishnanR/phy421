@@ -14,22 +14,24 @@
 # cc => call count, always give 0 !
 
 def Euler(x_0:float, y_0:float, x: float, dx: float, y_p: callable, cc: int) -> float:
-    global y, _x
+    global y, _x, _h
     if (cc == 0):
         y = y_0
         _x = x_0
+        _h = []
 
     if (_x >= x):
-        return y
+        return y, _h
     else:
         y += y_p(_x)*dx
         _x += dx
         cc += 1
+        _h.append(y)
         return Euler(_x, y, x, dx, y_p, cc)
 
 
-def sq_p(x):
-    return 2*x
+print(Euler(0, 0, 2, 0.01, lambda x : 2*x, 0))
 
-print(Euler(0, 0, 2, 0.01, sq_p, 0))
+def RK_2():
+    pass
 
