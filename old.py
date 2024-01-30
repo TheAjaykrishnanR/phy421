@@ -15,7 +15,9 @@ from collections.abc import Callable
 # y_p => first derivative
 # cc => call count, always give 0 !
 
-def Euler(x_0:float, y_0:float, x: float, dx: float, y_p: callable, cc: int) -> float:
+def Euler(x_0:float, y_0:float, x: float, 
+          dx: float, y_p: callable, cc: int) -> float:
+    
     global y, _x, _h
     if (cc == 0):
         y = y_0
