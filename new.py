@@ -3,11 +3,12 @@ from inspect import getfullargspec
 
 # arg_vp -> arg value pairs
 
-def rloop_init_caller(y_p: callable, init: list[str], x_f: int, dx: float):
+def fone(y_p: callable, init: list[str], x_f: int, dx: float):
     
     y_p_args: list[str] = getfullargspec(y_p).args
     y_p_args_order: int= []
     intermediate_state_dict: dict = {"x": None, "y": None}
+    state_history_list: list[dict] = []
 
     # To find the order of the DE
     arg_pattern: str= r"^y\d+$"
@@ -56,6 +57,8 @@ def rloop_init_caller(y_p: callable, init: list[str], x_f: int, dx: float):
 
     while intermediate_state_dict["x"] <= x_f:
 
+        state_history_list.append(intermediate_state_dict.copy())
+
         for i in range(0, order + 1):
             if i == 0:
                 intermediate_state_dict["y"] += intermediate_state_dict[f"y{i + 1}"]*dx
@@ -70,13 +73,11 @@ def rloop_init_caller(y_p: callable, init: list[str], x_f: int, dx: float):
 
         intermediate_state_dict[f"y{order + 1}"] = y_p(*arg_value_chain)
 
-
+        
         
 
-    
-    
-    print(intermediate_state_dict)
+    return state_history_list
     
 
 
-rloop_init_caller(lambda y: -0.5*y, ["y=10", "x=0"], 10, 0.1)
+fone(lambda y: -0.5*y, ["y=10", "x=0"], 10, 0.1)
