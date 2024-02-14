@@ -29,17 +29,17 @@ class NODES:
     state: dict = {"x":{"value": None, "evolver": None}, 
                    "y0":{"value": None, "evolver": None}}
 
-    def __init__(self, de: str, init: list[str]) -> None:
+    def __init__(self, de: str, init_v: list[str]) -> None:
 
         # state dict initializer 
-        if self.parser(de):
+        if self.parser(de, init_v):
             print(self.N)
             for i in range(1, self.N + 1):
                 self.state[f"y{i}"] = {"value": None, "evolver": None}
         else:
             raise Exception("There was an error parsing the equation entered")
         
-        self.add_determiners_and_values_to_state()
+        self.add_evolvers_and_init_values_to_state()
         
         print(self.state)
     '''
@@ -47,7 +47,7 @@ class NODES:
     yN = f(x, y0, y1, ..., yN-1) where y{i} denotes the i-th 
     derivative of y with respect to x. 
     '''
-    def parser(self, de: str) -> bool:
+    def parser(self, de: str, init_v: list[str]) -> bool:
         if "=" not in de:
             raise Exception("Low IQ Error: Bro you are supposed to input an equation")
         
@@ -97,7 +97,7 @@ class NODES:
     An evolver for a particular variable calculates its value in the next state step
     using the current state as its inputs
     '''
-    def add_determiners_and_values_to_state(self):
+    def add_evolvers_and_init_values_to_state(self):
         
         for idx, var in enumerate(self.state):
             if var == "x":
@@ -106,7 +106,7 @@ class NODES:
             elif var == f"y{self.N}":
                 LHS = symbols(f"y{self.N}")
                 RHS = self.yN_f
-                self.state[f"y{self.N}"]["evolver"] = solve(LHS - RHS, symbols("x"))
+                self.state[f"y{self.N}"]["evolver"] = solve(LHS - RHS, symbols("x"))[0]
 
             else:
                 self.state[var]["evolver"] = sympify(f"y{int(var[1]) + 1}")
