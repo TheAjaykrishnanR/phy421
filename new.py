@@ -1,9 +1,11 @@
 import re
+from collections.abc import Callable
 from inspect import getfullargspec
 
 # arg_vp -> arg value pairs
 
-def fone(y_p: callable, init: list[str], x_f: int, dx: float):
+def fone(y_p: callable, init: list[str], x_f: int, dx: float, 
+         next_step: Callable[[], dict], *args_for_next_step) -> list:
     
     y_p_args: list[str] = getfullargspec(y_p).args
     y_p_args_order: int= []
@@ -59,11 +61,7 @@ def fone(y_p: callable, init: list[str], x_f: int, dx: float):
 
         state_history_list.append(intermediate_state_dict.copy())
 
-        for i in range(0, order + 1):
-            if i == 0:
-                intermediate_state_dict["y"] += intermediate_state_dict[f"y{i + 1}"]*dx
-            else:
-                intermediate_state_dict[f"y{i}"] += intermediate_state_dict[f"y{i + 1}"]*dx
+        intermediate_state_dict = next_step(intermediate_state_dict, order, dx, *args_for_next_step)
         
         intermediate_state_dict["x"] += dx
 
@@ -73,11 +71,34 @@ def fone(y_p: callable, init: list[str], x_f: int, dx: float):
 
         intermediate_state_dict[f"y{order + 1}"] = y_p(*arg_value_chain)
 
-        
-        
-
     return state_history_list
+
+def euler(intermediate_state_dict: dict, order:int, dx: float) -> dict:
+
+    for i in range(0, order + 1):
+            if i == 0:
+                intermediate_state_dict["y"] += intermediate_state_dict[f"y{i + 1}"]*dx
+            else:
+                intermediate_state_dict[f"y{i}"] += intermediate_state_dict[f"y{i + 1}"]*dx  
+    
+    return intermediate_state_dict
+
+def rk_2(intermediate_state_dict: dict, order:int, dx: float, params: list[float],
+         y_p: callable) -> dict:
+
+    al, bt, a, b = params
+
+    for i in range(0, order + 1):
+
+        if i == 0:
+            k1 = intermediate_state_dict["y"]
+            k2 = y_p(intermediate_state_dict["y"] + bt*dx*k1, _x +  al*dx)
+            intermediate_state_dict["y"] += (a*k1 + b*k2)*dx
+        else:
+            intermediate_state_dict[f"y{i}"] += (a*k1 + b*k2)*dx  
+
     
 
+    return intermediate_state_dict
 
-fone(lambda y: -0.5*y, ["y=10", "x=0"], 10, 0.1)
+# fone(lambda y: -0.5*y, ["y=10", "x=0"], 10, 0.1, euler)
