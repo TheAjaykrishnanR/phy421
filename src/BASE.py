@@ -66,49 +66,40 @@ class NODES:
 
         _temp = {}
 
-        _temp = {k:v for k,v in self.state.items()}
         G1 = {}
-        for yn in self.state:
-            if yn != f"y{self.N - 1}" and yn != "x":
-                G1[yn] = _temp[f"y{int(yn[1]) + 1}"]
-            elif yn != "x":
-                G1[yn] = self.evolvers[yn].evalf(subs=_temp)
-
-
-        _temp = {k:v + G1[k]*(self.dx/2) for k,v in self.state.items() if k != "x"}
-        _temp["x"] = self.state["x"] + self.dx/2
         G2 = {}
-        for yn in self.state:
-            if yn != f"y{self.N - 1}" and yn != "x":
-                G2[yn] = _temp[f"y{int(yn[1]) + 1}"]
-            elif yn != "x":
-                G2[yn] = self.evolvers[yn].evalf(subs=_temp)
-
-
-        _temp = {k:v + G2[k]*(self.dx/2) for k,v in self.state.items() if k != "x"}
-        _temp["x"] = self.state["x"] + self.dx/2
         G3 = {}
-        for yn in self.state:
-            if yn != f"y{self.N - 1}" and yn != "x":
-                G3[yn] = _temp[f"y{int(yn[1]) + 1}"]
-            elif yn != "x":
-                G3[yn] = self.evolvers[yn].evalf(subs=_temp)
-         
-        _temp = {k:v + G3[k]*(self.dx/2) for k,v in self.state.items() if k != "x"}
-        _temp["x"] = self.state["x"] + self.dx
         G4 = {}
-        for yn in self.state:
-            if yn != f"y{self.N - 1}" and yn != "x":
-                G4[yn] = _temp[f"y{int(yn[1]) + 1}"]
-            elif yn != "x":
-                G4[yn] = self.evolvers[yn].evalf(subs=_temp)
 
+        Gs = [G1, G2, G3, G4]
+
+        for idx, Gi in enumerate(Gs):
+            
+            if idx == 0: 
+                Gsw = 0
+                _temp = {k:v for k,v in self.state.items() if k != "x"}
+
+            else:
+                Gsw = 0.5
+                if idx == 4: Gsw = 1
+                _temp = {k:v + Gsw*Gs[idx - 1][k]*(self.dx) for k,v in self.state.items() if k != "x"}
+            
+            _temp["x"] = self.state["x"] + Gsw*self.dx
+            
+            for yn in self.state:
+                if yn != f"y{self.N - 1}" and yn != "x":
+                    Gi[yn] = _temp[f"y{int(yn[1]) + 1}"]
+                elif yn != "x":
+                    Gi[yn] = self.evolvers[yn].evalf(subs=_temp)
+
+        '''update the state into the next step'''
         for yn in self.state:
             if yn == "x":
                 self.state[yn] += self.dx
             else:
-                self.state[yn]+=(self.dx/6)*(G1[yn] + 2*G2[yn] + 2*G3[yn] + G4[yn])
-
+                self.state[yn]+=(self.dx/6)*(Gs[0][yn] + 2*Gs[1][yn] + 2*Gs[2][yn] + Gs[3][yn])
+        
+        
 nodes = NODES("y2=-x*y1+2/x*y0", 0.1, ["x=1", "y0=0", "y1=1"])
 
 plt.plot(nodes.historyx, nodes.historyy)
