@@ -11,7 +11,7 @@ def ode_system(_t, _y):
     _t: discrete time step value
     _y: state vector [y1, y2]
     """
-    return np.array([_y[1], -_t * _y[1] + (2 / _t) * _y[0]])
+    return np.array([-0.5*_y[0] + _t**2])
 
 
 def rk4(func, tk, _yk, _dt=0.01, **kwargs):
@@ -45,7 +45,7 @@ dt = 0.01
 time = np.arange(1.0, 4.0 + dt, dt)
 
 # second order system initial conditions [y1, y2] at t = 1
-y0 = np.array([0, 1])
+y0 = np.array([10])
 
 # ==============================================================
 # propagate state
@@ -74,7 +74,7 @@ print(f'y evaluated at time t = {t} seconds: {yk[0]}')
 
 fig, ax = plt.subplots()
 ax.plot(time, state_history[:, 0])
-ax.plot(time, state_history[:, 1])
+# ax.plot(time, state_history[:, 1])
 ax.set(xlabel='t', ylabel='[Y]', title='Second Order System Propagation')
 plt.legend(['y1', 'y2'])
 ax.grid()
