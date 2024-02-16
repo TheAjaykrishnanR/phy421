@@ -1,6 +1,7 @@
 import re
 from sympy import sympify
 import matplotlib.pyplot as plt
+
 class NODES:
 
     N: int
@@ -27,7 +28,7 @@ class NODES:
             if int(yn[1]) == self.N - 1:
                 self.evolvers[yn] = RHS
             else:
-                self.evolvers[yn] = f"y{int(yn[1]) + 1}"
+                self.evolvers[yn] = sympify(f"y{int(yn[1]) + 1}")
         #self.evolvers = {'y0': "y1", 'y1': "-x*y1+2/x*y0"}
 
         '''Run'''
@@ -87,10 +88,9 @@ class NODES:
             _temp["x"] = self.state["x"] + Gsw*self.dx
             
             for yn in self.state:
-                if yn != f"y{self.N - 1}" and yn != "x":
-                    Gi[yn] = _temp[f"y{int(yn[1]) + 1}"]
-                elif yn != "x":
+                if yn != "x":
                     Gi[yn] = self.evolvers[yn].evalf(subs=_temp)
+                
 
         '''update the state into the next step'''
         for yn in self.state:
@@ -100,7 +100,7 @@ class NODES:
                 self.state[yn]+=(self.dx/6)*(Gs[0][yn] + 2*Gs[1][yn] + 2*Gs[2][yn] + Gs[3][yn])
         
         
-nodes = NODES("y2=-x*y1+2/x*y0", 0.1, ["x=1", "y0=0", "y1=1"])
+nodes = NODES("y2=2*y0/x-x*y1", 0.1, ["x=1", "y0=0", "y1=1"])
 
 plt.plot(nodes.historyx, nodes.historyy)
 plt.show()
