@@ -34,8 +34,8 @@ class NODES:
 
         '''Run'''
         for i in range(0, 30):
-            for var in self.state_history:
-                self.state_history[var].append(self.state[var])
+            for yn in self.state_history:
+                self.state_history[yn].append(self.state[yn])
             self.rk4()
 
     def yNparser(self, de: str):
@@ -82,8 +82,8 @@ class NODES:
             
             _temp["x"] = self.state["x"] + Gsw*self.dx
             
-            for var in _temp:
-                exec(f"{var}={_temp[var]}")
+            for yn in _temp:
+                exec(f"{yn}={_temp[yn]}")
 
             for yn in self.state:
                 if yn != "x":
