@@ -1,4 +1,4 @@
-class Interpolations:
+class Interpolators:
 
     class Point:
         def __init__(self, x, y):
@@ -44,5 +44,5 @@ class Interpolations:
     def test(self):
         print(self.Points[0].x)
 
-abc = Interpolations([(1,2),(2,3),(4,2)])
+abc = Interpolators([(1,2),(2,3),(4,2)])
 print(abc.lagrange())
