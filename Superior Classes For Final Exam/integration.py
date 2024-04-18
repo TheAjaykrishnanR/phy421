@@ -4,23 +4,22 @@ from typing import Callable
 class Integrators:
     
     n: int # Number of points YOU want/added BETWEEN a and b EXCLUDING a and b !
-    panels: int # panels = n + 1
+
     dx: float
     x: np.array
     fx: np.array = []
 
     def __init__(self, a, b, n, f: Callable[[np.array],np.array]):
 
-        self.n = n # n has to be odd for simpson methods
+        self.n = n # n has to be odd (so that panels can be even) for simpson methods to work fully and produce correct results
         self.f = f
 
-        self.panels = n + 1
-        self.dx = (b-a)/self.panels
-        self.x = np.linspace(a, b, self.n + 2)
-        self.fx = f(self.x)
+        no_of_panels = n + 1
+        total_no_of_points = n + 2
 
-        print(self.dx)
-        print(len(self.x))
+        self.dx = (b-a)/no_of_panels
+        self.x = np.linspace(a, b, total_no_of_points)
+        self.fx = f(self.x)
 
     def trapezoid(self):
         result = (self.dx/2)*(self.fx[0] + self.fx[-1] + 2*np.sum(self.fx[1:-1]))
