@@ -41,12 +41,13 @@ class PDE_HEAT:
         m = self.total_no_of_points_x
         A = np.zeros((m, m))
 
-        i_ind = np.arange(1, m - 1, 1)
         j_ind_low = np.arange(0, m - 2, 1)
+        i_ind = np.arange(1, m - 1, 1)
         j_ind_high = np.arange(2, m, 1)
 
-        A[i_ind, i_ind] = 1 - 2*self.sigma
+        A[0,0] = A[-1,-1] = 1
         A[i_ind, j_ind_low ] = self.sigma
+        A[i_ind, i_ind] = 1 - 2*self.sigma
         A[i_ind, j_ind_high] = self.sigma
 
         return A
@@ -56,13 +57,13 @@ class PDE_HEAT:
         m = self.total_no_of_points_x
         A = np.zeros((m, m))
 
-        i_ind = np.arange(1, m - 1, 1)
         j_ind_low = np.arange(0, m - 2, 1)
+        i_ind = np.arange(1, m - 1, 1)
         j_ind_high = np.arange(2, m, 1)
 
         A[0,0] = A[-1,-1] = 1
-        A[i_ind, i_ind] = 1 + 2*self.sigma
         A[i_ind, j_ind_low ] = -self.sigma
+        A[i_ind, i_ind] = 1 + 2*self.sigma
         A[i_ind, j_ind_high] = -self.sigma
 
         return A
