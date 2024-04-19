@@ -70,7 +70,7 @@ class NODES:
                 _temp = {k:v for k,v in self.state.items() if k != "x"}
             else:
                 Gsw = 0.5
-                if idx == 4: Gsw = 1
+                if idx == 3: Gsw = 1
                 _temp = {k:v + Gsw*Gs[idx - 1][k]*(self.dx) for k,v in self.state.items() if k != "x"}
             _temp["x"] = self.state["x"] + Gsw*self.dx
         

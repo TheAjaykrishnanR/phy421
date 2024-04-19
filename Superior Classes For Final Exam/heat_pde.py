@@ -30,7 +30,7 @@ class PDE_HEAT:
     def createW(self):
 
         W = np.zeros((self.total_no_of_points_t, self.total_no_of_points_x))
-        W[0,1:-1] = self.x_t0(np.linspace(self.a, self.b, self.nx))
+        W[0,1:-1] = self.x_t0(self.x[1:-1])
         W[:,0] = self.t_xa(self.t)
         W[:,-1] = self.t_xb(self.t)
 
